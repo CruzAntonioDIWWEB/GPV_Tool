@@ -1,0 +1,306 @@
+/* LOWI Color Palette */
+:root {
+    --lowi-coral: #FF6B6B;
+    --lowi-orange: #FF8C42;
+    --lowi-purple: #2D1B69;
+    --lowi-navy: #1A0B3E;
+    --lowi-light: #F8F9FA;
+    --lowi-white: #FFFFFF;
+    --lowi-gray: #6C757D;
+    --lowi-success: #28A745;
+    --lowi-error: #DC3545;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--lowi-purple) 0%, var(--lowi-navy) 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--lowi-navy);
+}
+
+/* Container for forms */
+#smallForm, #bigForm {
+    background: var(--lowi-white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+/* Headings */
+h2 {
+    color: var(--lowi-purple);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Form Inputs */
+input[type="text"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="number"],
+textarea,
+select { /* <-- ADDED STYLE FOR SELECT ELEMENT */
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #E9ECEF;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    /* Reset background color to match other inputs, as select can sometimes look different */
+    background-color: var(--lowi-white); 
+    /* Remove default system arrow on some browsers for better control */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Add a custom arrow style using a background image/SVG (optional, but improves consistency) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%232D1B69'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em;
+}
+
+input[type="text"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus { /* <-- ADDED FOCUS STYLE FOR SELECT ELEMENT */
+    outline: none;
+    border-color: var(--lowi-coral);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Labels */
+label {
+    display: block;
+    color: var(--lowi-purple);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Buttons */
+button[type="submit"] {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--lowi-coral) 0%, var(--lowi-orange) 100%);
+    color: var(--lowi-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Fieldsets */
+fieldset {
+    border: 2px solid #E9ECEF;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+legend {
+    color: var(--lowi-purple);
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 0 10px;
+    letter-spacing: 0.5px;
+}
+
+/* Radio Buttons */
+input[type="radio"] {
+    margin-right: 8px;
+    margin-left: 15px;
+    accent-color: var(--lowi-coral);
+    cursor: pointer;
+}
+
+input[type="radio"]:first-of-type {
+    margin-left: 0;
+}
+
+fieldset label[for^="top_"] {
+    display: inline;
+    margin-bottom: 0;
+    text-transform: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Number inputs in fieldset */
+fieldset > div {
+    margin-bottom: 15px;
+}
+
+fieldset > div:last-child {
+    margin-bottom: 0;
+}
+
+fieldset input[type="number"] {
+    margin-bottom: 0;
+}
+
+/* Table Styles */
+#resultsTable {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    background: var(--lowi-white);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: none;
+}
+
+#resultsTable thead {
+    background: linear-gradient(135deg, var(--lowi-purple) 0%, var(--lowi-navy) 100%);
+    color: var(--lowi-white);
+}
+
+#resultsTable th {
+    padding: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+    border: none;
+}
+
+#resultsTable td {
+    padding: 16px;
+    border-bottom: 1px solid #E9ECEF;
+    border-right: 1px solid #E9ECEF;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--lowi-coral);
+}
+
+#resultsTable td:first-child {
+    text-align: left;
+    color: var(--lowi-purple);
+    font-weight: 700;
+    background: #F8F9FA;
+}
+
+#resultsTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+#resultsTable td:last-child {
+    border-right: none;
+}
+
+/* Horizontal Rule */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--lowi-coral) 50%, transparent 100%);
+    margin: 30px auto;
+    max-width: 600px;
+}
+
+/* Messages */
+/* NOTE: The logic for determining success/error color based on content (p:contains('ERROR')) 
+    is not standard CSS and is being ignored here, using a single consistent style. 
+    You might want to implement this using a class in PHP instead.
+*/
+body > p {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    animation: slideDown 0.3s ease;
+    background: var(--lowi-light);
+    color: var(--lowi-navy);
+    border-left: 4px solid var(--lowi-coral);
+}
+
+/* Message styling classes (optional, better than p:contains) */
+.success-message {
+    border-left: 4px solid var(--lowi-success);
+    color: var(--lowi-success);
+}
+
+.error-message {
+    border-left: 4px solid var(--lowi-error);
+    color: var(--lowi-error);
+}
+
+
+/* Animation */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    body {
+        padding: 10px;
+    }
+    
+    #smallForm, #bigForm {
+        padding: 20px;
+    }
+    
+    button[type="submit"] {
+        font-size: 14px;
+    }
+    
+    #resultsTable {
+        font-size: 14px;
+    }
+    
+    #resultsTable td {
+        padding: 12px 8px;
+        font-size: 16px;
+    }
+}
