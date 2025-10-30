@@ -1,7 +1,7 @@
 <?php
 // --- FILE CONFIGURATION ---
 $vendidas_file = 'tabla_vendidas.csv'; // File for "Vendidas" data
-$activadas_file = 'tabla_instaladas.csv'; // File for "Instaladas" data
+$activadas_file = 'tabla_activadas.csv'; // File for "Instaladas" data
 $log_file = 'registros.csv'; 
 $data_found = false; 
 $message = ''; 
@@ -22,44 +22,65 @@ $gpv_input = strtoupper(trim($_POST['gpv'] ?? ''));
 $pdv_input = strtoupper(trim($_POST['pdv'] ?? ''));
 
 /**
- * Function that searches for the PDV in a CSV file and returns the data row.
- * ASSUMPTION: The first row is the header, and the delimiter is a SEMICOLON (;).
+ * Function that searches for the PDV in a CSV file and validates it belongs to the GPV.
+ * Returns:
+ * - Associative array (if PDV and GPV match)
+ * - ['error' => string] (if file fails to open/read)
+ * - ['gpv_mismatch' => true] (if PDV is found but GPV is wrong)
+ * - false (if PDV is not found)
  */
 function search_file($file_name, $gpv_input, $pdv_input) {
     // Delimiter is set to SEMICOLON (;) based on the user's provided snippet.
     $delimiter = ';'; 
 
     if (!file_exists($file_name)) {
-        return ['error' => "Master data file '{$file_name}' does not exist."];
+        // MENSAJE DE ERROR TRADUCIDO
+        return ['error' => "El archivo maestro de datos '{$file_name}' no existe."];
     }
     
     if (($handle = fopen($file_name, 'r')) !== FALSE) {
+        
         // Read the actual data header (Assumes header is the very first row)
         $headers = fgetcsv($handle, 1000, $delimiter); 
 
         if ($headers === FALSE) {
              fclose($handle);
-             return ['error' => "Could not read the header in {$file_name}."];
+             // MENSAJE DE ERROR TRADUCIDO
+             return ['error' => "No se pudo leer el encabezado en {$file_name}."];
         }
 
-        // Search for the key column name ('PDV' is the identifier in the simplified export)
+        // Search for the key column names ('PDV' and 'GPV')
         $pdv_col_index = array_search('PDV', $headers); 
-        
-        // Fallback: If 'PDV' is not found, assume PDV is the second column (index 1) based on the snippet.
-        if ($pdv_col_index === false) {
-             $pdv_col_index = 1; 
-        }
+        $gpv_col_index = array_search('GPV', $headers);
+
+        // Fallback: If 'PDV' or 'GPV' are not found, assume index 1 and 0 respectively.
+        if ($pdv_col_index === false) { $pdv_col_index = 1; }
+        if ($gpv_col_index === false) { $gpv_col_index = 0; } 
 
         while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
-            // Compare the PDV from the CSV with the user's input
-            if (strtoupper(trim($row[$pdv_col_index] ?? '')) === $pdv_input) {
-                fclose($handle);
-                return array_combine($headers, $row); // Return the entire row as an associative array
+            
+            $file_pdv = strtoupper(trim($row[$pdv_col_index] ?? ''));
+            
+            // 1. Check if the PDV matches
+            if ($file_pdv === $pdv_input) {
+                
+                // 2. If PDV matches, check if the GPV also matches (Case-insensitive)
+                $file_gpv = strtoupper(trim($row[$gpv_col_index] ?? ''));
+                
+                if ($file_gpv === $gpv_input) {
+                    // PDV and GPV match: SUCCESS
+                    fclose($handle);
+                    return array_combine($headers, $row); 
+                } else {
+                    // PDV found, but GPV doesn't match: VALIDATION FAILURE
+                    fclose($handle);
+                    return ['gpv_mismatch' => true]; 
+                }
             }
         }
         fclose($handle);
     }
-    return false; // Data not found
+    return false; // PDV not found in file
 }
 
 
@@ -87,13 +108,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['a
         }
         fputcsv($handle, $log_data, ';');
         fclose($handle); 
-        $message = "¡Datos guardados con éxito!";
+        $message = "¡Datos guardados con éxito!"; // MENSAJE DE ÉXITO EN ESPAÑOL
 
-        // Needed so the search code runs and displays the table after successful export
+    // Needed so the search code runs and displays the table after successful export
         $gpv_input = $_POST['gpv_log'];
         $pdv_input = $_POST['pdv_log'];
     } else {
-        $message = "ERROR: Could not write to the log file. Check permissions on IONOS.";
+        // MENSAJE DE ERROR TRADUCIDO
+        $message = "ERROR: No se pudo escribir en el archivo de registro. Compruebe los permisos.";
     }
 }
 
@@ -101,50 +123,66 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['a
 // --- SEARCH FUNCTION GPV-PDV (small form) ---
 if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST['accion'] == 'buscar') || isset($_POST['gpv_log'])) ){
 
-    // Note: search_file function definition has been changed to remove rows_to_skip
     $vendidas_result = search_file($vendidas_file, $gpv_input, $pdv_input);
     $activadas_result = search_file($activadas_file, $gpv_input, $pdv_input);
     
-    // 1. Handle file errors first
+    // 1. Handle file access errors first
     if (isset($vendidas_result['error'])) {
         $message = "ERROR: " . $vendidas_result['error'];
     } elseif (isset($activadas_result['error'])) {
          $message = "ERROR: " . $activadas_result['error'];
     } 
-    // 2. If data is found in at least one file
+    // 2. Handle GPV mismatch (PDV was found, but associated GPV was wrong)
+    elseif (isset($vendidas_result['gpv_mismatch']) || isset($activadas_result['gpv_mismatch'])) {
+        // MENSAJE DE ERROR TRADUCIDO
+        $message = "ERROR: El PDV '" . htmlspecialchars($pdv_input) . "' fue encontrado, pero pertenece a otro GPV. Por favor, revise su selección.";
+    }
+    // 3. If data is found in at least one file (and no mismatch)
     elseif ($vendidas_result !== false || $activadas_result !== false) {
         $data_found = true;
         
         // Load found data into the array that feeds the HTML table
         // Sold Data (Vendidas)
         if (is_array($vendidas_result)) {
-            // MAPPING UPDATED: Using the simplified CSV column headers
+            // Mapeo para el archivo de Vendidas
             $current_data['Vendidas FTTH'] = $vendidas_result['Vendidas FTTH'] ?? '0'; 
             $current_data['Vendidas Móvil'] = $vendidas_result['Vendidas Móvil'] ?? '0'; 
         }
 
         // Activated Data (Activadas)
         if (is_array($activadas_result)) {
-            // MAPPING UPDATED: Assuming 'Instaladas' file also uses the simplified column headers
-            $current_data['Activadas FTTH'] = $activadas_result['Vendidas FTTH'] ?? '0'; 
-            $current_data['Activadas Móvil'] = $activadas_result['Vendidas Móvil'] ?? '0';
+            // FIX: Se revierte la corrección anterior. Asumimos que el archivo 'tabla_instaladas.csv'
+            // usa los mismos nombres de cabecera 'Vendidas FTTH' y 'Vendidas Móvil' internamente
+            // para mostrar los datos de Instaladas/Activadas, ya que así funcionaba previamente.
+            $current_data['Activadas FTTH'] = $activadas_result['Activadas FTTH'] ?? '0'; 
+            $current_data['Activadas Móvil'] = $activadas_result['Activadas Móvil'] ?? '0';
+        }
+        
+        if (isset($_POST['accion']) && $_POST['accion'] == 'buscar') {
+            $message = "Datos cargados correctamente para el PDV: " . htmlspecialchars($pdv_input);
+            
+            // Añadir un mensaje de diagnóstico si la data de Vendidas es 0 pero la de Activadas sí cargó.
+            if (!is_array($vendidas_result) && is_array($activadas_result)) {
+                $message .= "<br>AVISO: El PDV no se encontró en el archivo de **VENDIDAS**. Los datos de Vendidas se muestran como 0.";
+            }
         }
         
     } else {
-        // 3. If no data is found (only show error if 'buscar' was explicitly pressed)
+        // 4. If no data is found (PDV not present in either file)
         if (isset($_POST['accion']) && $_POST['accion'] == 'buscar') {
-            $message = "ERROR: PDV not found in either master data file.";
+            // MENSAJE DE ERROR TRADUCIDO
+            $message = "ERROR: El PDV '" . htmlspecialchars($pdv_input) . "' no se encontró en los archivos de datos maestros.";
         }
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>Management Tool</title>
+    <title>Herramienta de Gestión</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -153,7 +191,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
     <?php
     // Display error/success messages
     if (!empty($message)):
-        echo "<p>" . $message . "</p>";
+        // Add a class based on whether it's an ERROR message or a WARNING/SUCCESS message
+        $class = (strpos($message, 'ERROR:') !== false) ? 'error-message' : 'success-message';
+        echo "<p class=\"{$class}\">" . $message . "</p>";
     endif;
     ?>
 
@@ -164,7 +204,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
         <h2>GPV</h2>
         <!-- GPV DROPDOWN MENU -->
         <select id="gpv" name="gpv" required>
-            <option value="" disabled selected>Select GPV</option>
+            <option value="" disabled selected>Seleccione GPV</option>
             <?php foreach ($gpv_list as $gpv): ?>
                 <option value="<?php echo htmlspecialchars($gpv); ?>" <?php echo ($gpv_input === $gpv) ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($gpv); ?>
@@ -183,6 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
 
     <?php
     // 2. CONDITIONAL CONTENT (Table and Big Form)
+    // Only display if data was found (and therefore passed validation)
     if ($data_found):
     ?>
 
@@ -219,7 +260,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
             <input type="hidden" name="gpv_log" value="<?php echo htmlspecialchars($gpv_input); ?>">
             <input type="hidden" name="pdv_log" value="<?php echo htmlspecialchars($pdv_input); ?>">
 
-            <label for="fecha_hora">Date and Time</label>
+            <label for="fecha_hora">Fecha y Hora</label>
             <input type="datetime-local" id="fecha_hora" name="fecha_hora" required>
 
             <fieldset>
@@ -233,11 +274,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
             <label for="plv">PLV</label>
             <input type="text" id="plv" name="plv" required>
 
-            <label for="acciones">Actions</label>
+            <label for="acciones">Acciones</label>
             <textarea id="acciones" name="acciones" rows="4" required></textarea>
 
             <fieldset>
-                <legend>Commitment (Compromiso)</legend>
+                <legend>Compromiso</legend>
                 <div>
                     <label for="compromiso_movil">Móvil</label>
                     <input type="number" id="compromiso_movil" name="compromiso_movil" value="0" min="0">
@@ -248,7 +289,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
                 </div>
             </fieldset>
 
-            <label for="fecha_proxima_visita">Date of Next Visit</label>
+            <label for="fecha_proxima_visita">Fecha de la Próxima Visita</label>
             <input type="date" id="fecha_proxima_visita" name="fecha_proxima_visita" required>
 
             <button type="submit">ENVIAR</button>
