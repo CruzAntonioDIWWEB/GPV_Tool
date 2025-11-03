@@ -1,12 +1,12 @@
 <?php
 // --- FILE CONFIGURATION ---
-$vendidas_file = 'tabla_vendidas.csv'; // File for "Vendidas" data
-$activadas_file = 'tabla_activadas.csv'; // File for "Instaladas" data
-$log_file = 'registros.csv'; 
+$vendidas_file = 'tabla_vendidas.csv'; // Database of the "Vendidas"
+$activadas_file = 'tabla_activadas.csv'; // Database of the "Instaladas"
+$log_file = 'registros.csv'; // Result file
 $data_found = false; 
-$message = ''; 
+$message = ''; // Error message
 
-// GPV List for Dropdown and Validation (New Feature)
+// GPV List for Dropdown and Validation
 $gpv_list = ['JENI', 'MAR', 'JUANLU', 'SARAY', 'CRUSERTEL'];
 
 // Array to store combined data, initialized to '0'
@@ -30,22 +30,22 @@ $pdv_input = strtoupper(trim($_POST['pdv'] ?? ''));
  * - false (if PDV is not found)
  */
 function search_file($file_name, $gpv_input, $pdv_input) {
-    // Delimiter is set to SEMICOLON (;) based on the user's provided snippet.
+    // Delimiter is set to SEMICOLON (;)
     $delimiter = ';'; 
 
     if (!file_exists($file_name)) {
-        // MENSAJE DE ERROR TRADUCIDO
+        // MENSAJE DE ERROR 
         return ['error' => "El archivo maestro de datos '{$file_name}' no existe."];
     }
     
     if (($handle = fopen($file_name, 'r')) !== FALSE) {
         
-        // Read the actual data header (Assumes header is the very first row)
+        // Read the actual data header 
         $headers = fgetcsv($handle, 1000, $delimiter); 
 
         if ($headers === FALSE) {
              fclose($handle);
-             // MENSAJE DE ERROR TRADUCIDO
+             // MENSAJE DE ERROR 
              return ['error' => "No se pudo leer el encabezado en {$file_name}."];
         }
 
@@ -61,10 +61,10 @@ function search_file($file_name, $gpv_input, $pdv_input) {
             
             $file_pdv = strtoupper(trim($row[$pdv_col_index] ?? ''));
             
-            // 1. Check if the PDV matches
+            // Check if the PDV matches
             if ($file_pdv === $pdv_input) {
                 
-                // 2. If PDV matches, check if the GPV also matches (Case-insensitive)
+                // If PDV matches, check if the GPV also matches (Case-insensitive)
                 $file_gpv = strtoupper(trim($row[$gpv_col_index] ?? ''));
                 
                 if ($file_gpv === $gpv_input) {
@@ -108,13 +108,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['a
         }
         fputcsv($handle, $log_data, ';');
         fclose($handle); 
-        $message = "¡Datos guardados con éxito!"; // MENSAJE DE ÉXITO EN ESPAÑOL
+        $message = "¡Datos guardados con éxito!"; // MENSAJE DE ÉXITO 
 
     // Needed so the search code runs and displays the table after successful export
         $gpv_input = $_POST['gpv_log'];
         $pdv_input = $_POST['pdv_log'];
     } else {
-        // MENSAJE DE ERROR TRADUCIDO
+        // MENSAJE DE ERROR 
         $message = "ERROR: No se pudo escribir en el archivo de registro. Compruebe los permisos.";
     }
 }
@@ -126,18 +126,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
     $vendidas_result = search_file($vendidas_file, $gpv_input, $pdv_input);
     $activadas_result = search_file($activadas_file, $gpv_input, $pdv_input);
     
-    // 1. Handle file access errors first
+    // Handle file access errors first
     if (isset($vendidas_result['error'])) {
         $message = "ERROR: " . $vendidas_result['error'];
     } elseif (isset($activadas_result['error'])) {
          $message = "ERROR: " . $activadas_result['error'];
     } 
-    // 2. Handle GPV mismatch (PDV was found, but associated GPV was wrong)
+    // Handle GPV mismatch (PDV was found, but associated GPV was wrong)
     elseif (isset($vendidas_result['gpv_mismatch']) || isset($activadas_result['gpv_mismatch'])) {
-        // MENSAJE DE ERROR TRADUCIDO
+        // MENSAJE DE ERROR 
         $message = "ERROR: El PDV '" . htmlspecialchars($pdv_input) . "' fue encontrado, pero pertenece a otro GPV. Por favor, revise su selección.";
     }
-    // 3. If data is found in at least one file (and no mismatch)
+    // If data is found in at least one file (and no mismatch)
     elseif ($vendidas_result !== false || $activadas_result !== false) {
         $data_found = true;
         
@@ -151,9 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
 
         // Activated Data (Activadas)
         if (is_array($activadas_result)) {
-            // FIX: Se revierte la corrección anterior. Asumimos que el archivo 'tabla_instaladas.csv'
-            // usa los mismos nombres de cabecera 'Vendidas FTTH' y 'Vendidas Móvil' internamente
-            // para mostrar los datos de Instaladas/Activadas, ya que así funcionaba previamente.
+            // Shows the data of the "Activadas" and "Vendidas"
             $current_data['Activadas FTTH'] = $activadas_result['Activadas FTTH'] ?? '0'; 
             $current_data['Activadas Móvil'] = $activadas_result['Activadas Móvil'] ?? '0';
         }
@@ -168,9 +166,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
         }
         
     } else {
-        // 4. If no data is found (PDV not present in either file)
+        // If no data is found (PDV not present in either file)
         if (isset($_POST['accion']) && $_POST['accion'] == 'buscar') {
-            // MENSAJE DE ERROR TRADUCIDO
+            // MENSAJE DE ERROR 
             $message = "ERROR: El PDV '" . htmlspecialchars($pdv_input) . "' no se encontró en los archivos de datos maestros.";
         }
     }
