@@ -83,6 +83,28 @@ function search_file($file_name, $gpv_input, $pdv_input) {
     return false; // PDV not found in file
 }
 
+// --- DOWNLOAD AND CLEAR THE RESULTS FILE ---
+if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['accion'] == 'descargar_limpiar'){
+    if (file_exists($log_file) && filesize($log_file) > 0) {
+        // Set up the headers to force the download of the file
+        header('Content-Type: application/csv');
+        // Dinamic name to register the date of download
+        $download_filename = 'registro_'. strtoupper($gpv_input) . '_' . date('Y-m-d') . '.csv';
+        header('Content-Disposition: attachment; filename="' . $download_filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
+        // Sends the content of the file to the browser
+        readfile($log_file);
+
+        // Cleans the content of the file after the download
+        file_put_contents($log_file, '');
+
+    } else {
+        echo "El archivo de registros está vacío o no existe. No hay nada que descargar.";
+    }
+    exit;
+}
 
 // --- EXPORT FUNCTION (big form) ---
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['accion'] == 'exportar') {
@@ -292,6 +314,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
 
             <button type="submit">ENVIAR</button>
         </form>
+
+    <!-- Download and clear form -->
+    <form id="downloadForm" method="POST" action="index.php">
+        <input type="hidden" name="accion" value="descargar_limpiar">
+        <!-- Include current GPV and PDV so the download action can build a filename containing GPV -->
+        <input type="hidden" name="gpv" value="<?php echo htmlspecialchars($gpv_input); ?>">
+        <input type="hidden" name="pdv" value="<?php echo htmlspecialchars($pdv_input); ?>">
+        <button type="submit" id="downloadButton"> Descargar y Finalizar </button>
+        <p style="text-align: center; font-size: 0.9em; color: #888;">*Al descargar el archivo, se borrarán los datos previos.*</p>
+    </form>
 
     <?php endif; ?>
 
