@@ -156,7 +156,8 @@ input[type="radio"]:first-of-type {
     margin-left: 0;
 }
 
-fieldset label[for^="top_"] {
+fieldset label[for^="top_"],
+fieldset label[for^="compromiso_"] {
     display: inline;
     margin-bottom: 0;
     text-transform: none;

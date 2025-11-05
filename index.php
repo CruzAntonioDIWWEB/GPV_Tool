@@ -119,13 +119,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['a
         $_POST['acciones'],
         (int)($_POST['compromiso_movil'] ?? 0),
         (int)($_POST['compromiso_fibra'] ?? 0),
+        $_POST['compromiso'],
         $_POST['fecha_proxima_visita']
     ];
 
     if (($handle = fopen($log_file, 'a')) !== FALSE ) {
         // Write headers only if the file is empty (log file still uses semicolon)
         if(filesize($log_file) == 0) {
-            $headers = ['Fecha_Registro', 'GPV', 'PDV', 'Fecha_hora', 'TOP', 'PLV', 'Acciones', 'Compromiso_Movil', 'Compromiso_Fibra', 'Fecha_Proxima_Visita'];
+            $headers = ['Fecha_Registro', 'GPV', 'PDV', 'Fecha_hora', 'TOP', 'PLV', 'Acciones', 'Compromiso_Movil', 'Compromiso_Fibra', 'Compromiso_Cumplido', 'Fecha_Proxima_Visita'];
             fputcsv($handle, $headers, ';');
         }
         fputcsv($handle, $log_data, ';');
@@ -307,6 +308,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
                     <label for="compromiso_fibra">Fibra</label>
                     <input type="number" id="compromiso_fibra" name="compromiso_fibra" value="0" min="0">
                 </div>
+                    <fieldset>
+                        <legend>¿Compromiso cumplido?</legend>
+                        <input type="radio" id="compromiso_si" name="compromiso" value="SI" required>
+                        <label for="compromiso_si">SI</label>
+                        <input type="radio" id="compromiso_no" name="compromiso" value="NO">
+                        <label for="compromiso_no">NO</label>
+                    </fieldset>
             </fieldset>
 
             <label for="fecha_proxima_visita">Fecha de la Próxima Visita</label>
