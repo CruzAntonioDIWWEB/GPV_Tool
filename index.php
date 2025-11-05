@@ -2,7 +2,7 @@
 // --- FILE CONFIGURATION ---
 $vendidas_file = 'tabla_vendidas.csv'; // Database of the "Vendidas"
 $activadas_file = 'tabla_activadas.csv'; // Database of the "Instaladas"
-$log_file = 'registros.csv'; // Result file
+// REMOVED: Single log_file, now using dynamic per-GPV files
 $data_found = false; 
 $message = ''; // Error message
 
@@ -20,6 +20,16 @@ $current_data = [
 // Get POST values, default to empty string if not set
 $gpv_input = strtoupper(trim($_POST['gpv'] ?? ''));
 $pdv_input = strtoupper(trim($_POST['pdv'] ?? ''));
+
+/**
+ * Function to generate the log filename based on GPV and current month/year
+ * Format: GPVNAME_MonthName_Year.csv (e.g., JUANLU_November_2025.csv)
+ */
+function get_log_filename($gpv) {
+    $month_name = date('F'); // Full month name (e.g., "November")
+    $year = date('Y');       // Year (e.g., "2025")
+    return strtoupper($gpv) . '_' . $month_name . '_' . $year . '.csv';
+}
 
 /**
  * Function that searches for the PDV in a CSV file and validates it belongs to the GPV.
@@ -83,22 +93,66 @@ function search_file($file_name, $gpv_input, $pdv_input) {
     return false; // PDV not found in file
 }
 
-// --- DOWNLOAD AND CLEAR THE RESULTS FILE ---
-if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['accion'] == 'descargar_limpiar'){
+/**
+ * Function to get all PDVs grouped by GPV from the Vendidas file
+ * Returns: array ['GPV1' => ['PDV1', 'PDV2'], 'GPV2' => ['PDV3']]
+ */
+function get_all_gpv_pdv_pairs($file_name) {
+    $delimiter = ';';
+    $gpv_pdv_map = [];
+    
+    if (!file_exists($file_name) || ($handle = fopen($file_name, 'r')) === FALSE) {
+        return $gpv_pdv_map;
+    }
+    
+    // Read headers
+    $headers = fgetcsv($handle, 1000, $delimiter);
+    if ($headers === FALSE) {
+        fclose($handle);
+        return $gpv_pdv_map;
+    }
+    
+    // Find column indices
+    $pdv_col_index = array_search('PDV', $headers);
+    $gpv_col_index = array_search('GPV', $headers);
+    
+    if ($pdv_col_index === false) { $pdv_col_index = 1; }
+    if ($gpv_col_index === false) { $gpv_col_index = 0; }
+    
+    // Read all rows and group PDVs by GPV
+    while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+        $gpv = strtoupper(trim($row[$gpv_col_index] ?? ''));
+        $pdv = strtoupper(trim($row[$pdv_col_index] ?? ''));
+        
+        if (!empty($gpv) && !empty($pdv)) {
+            if (!isset($gpv_pdv_map[$gpv])) {
+                $gpv_pdv_map[$gpv] = [];
+            }
+            // Avoid duplicates
+            if (!in_array($pdv, $gpv_pdv_map[$gpv])) {
+                $gpv_pdv_map[$gpv][] = $pdv;
+            }
+        }
+    }
+    
+    fclose($handle);
+    return $gpv_pdv_map;
+}
+
+// --- DOWNLOAD FILE (No longer clears the file) ---
+if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['accion'] == 'descargar'){
+    $log_file = get_log_filename($gpv_input);
+    
     if (file_exists($log_file) && filesize($log_file) > 0) {
         // Set up the headers to force the download of the file
         header('Content-Type: application/csv');
-        // Dinamic name to register the date of download
-        $download_filename = 'registro_'. strtoupper($gpv_input) . '_' . date('Y-m-d') . '.csv';
-        header('Content-Disposition: attachment; filename="' . $download_filename . '"');
+        header('Content-Disposition: attachment; filename="' . $log_file . '"');
         header('Pragma: no-cache');
         header('Expires: 0');
         
         // Sends the content of the file to the browser
         readfile($log_file);
-
-        // Cleans the content of the file after the download
-        file_put_contents($log_file, '');
+        // NOTE: File is NOT cleared anymore - data persists for the month
 
     } else {
         echo "El archivo de registros está vacío o no existe. No hay nada que descargar.";
@@ -108,6 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['a
 
 // --- EXPORT FUNCTION (big form) ---
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['accion'] == 'exportar') {
+    // Get the GPV-specific log file
+    $log_file = get_log_filename($_POST['gpv_log']);
+    
     // Collect data from the big form
     $log_data = [
         date("Y-m-d H:i:s"), 
@@ -119,21 +176,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['a
         $_POST['acciones'],
         (int)($_POST['compromiso_movil'] ?? 0),
         (int)($_POST['compromiso_fibra'] ?? 0),
-        $_POST['compromiso'],
         $_POST['fecha_proxima_visita']
     ];
 
     if (($handle = fopen($log_file, 'a')) !== FALSE ) {
-        // Write headers only if the file is empty (log file still uses semicolon)
-        if(filesize($log_file) == 0) {
-            $headers = ['Fecha_Registro', 'GPV', 'PDV', 'Fecha_hora', 'TOP', 'PLV', 'Acciones', 'Compromiso_Movil', 'Compromiso_Fibra', 'Compromiso_Cumplido', 'Fecha_Proxima_Visita'];
+        // Write headers only if the file is empty or doesn't exist yet
+        if(!file_exists($log_file) || filesize($log_file) == 0) {
+            $headers = ['Fecha_Registro', 'GPV', 'PDV', 'Fecha_hora', 'TOP', 'PLV', 'Acciones', 'Compromiso_Movil', 'Compromiso_Fibra', 'Fecha_Proxima_Visita'];
             fputcsv($handle, $headers, ';');
         }
         fputcsv($handle, $log_data, ';');
         fclose($handle); 
-        $message = "¡Datos guardados con éxito!"; // MENSAJE DE ÉXITO 
+        $message = "¡Datos guardados con éxito en " . htmlspecialchars($log_file) . "!"; // MENSAJE DE ÉXITO 
 
-    // Needed so the search code runs and displays the table after successful export
+        // Needed so the search code runs and displays the table after successful export
         $gpv_input = $_POST['gpv_log'];
         $pdv_input = $_POST['pdv_log'];
     } else {
@@ -196,6 +252,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
         }
     }
 }
+
+// Get all GPV-PDV pairs for the JavaScript dropdown
+$gpv_pdv_data = get_all_gpv_pdv_pairs($vendidas_file);
 ?>
 
 <!DOCTYPE html>
@@ -235,7 +294,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
         <!-- END GPV DROPDOWN -->
 
         <h2>PDV</h2>
-        <input type="text" id="pdv" name="pdv" required value="<?php echo htmlspecialchars($pdv_input); ?>">
+        <!-- PDV DROPDOWN (now dynamic, populated by JavaScript) -->
+        <select id="pdv" name="pdv" required disabled>
+            <option value="" disabled selected>Seleccione primero un GPV</option>
+        </select>
 
         <button type="submit">Iniciar</button>
     </form>
@@ -309,11 +371,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
                     <input type="number" id="compromiso_fibra" name="compromiso_fibra" value="0" min="0">
                 </div>
                     <fieldset>
-                        <legend>¿Compromiso cumplido?</legend>
-                        <input type="radio" id="compromiso_si" name="compromiso" value="SI" required>
-                        <label for="compromiso_si">SI</label>
-                        <input type="radio" id="compromiso_no" name="compromiso" value="NO">
-                        <label for="compromiso_no">NO</label>
+                    <legend>¿Compromiso cumplido?</legend>
+                    <input type="radio" id="compromiso_si" name="compromiso" value="SI" required>
+                    <label for="compromiso_si">SI</label>
+                    <input type="radio" id="compromiso_no" name="compromiso" value="NO">
+                    <label for="compromiso_no">NO</label>
                     </fieldset>
             </fieldset>
 
@@ -323,17 +385,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST
             <button type="submit">ENVIAR</button>
         </form>
 
-    <!-- Download and clear form -->
+    <!-- Download form (no longer clears file) -->
     <form id="downloadForm" method="POST" action="index.php">
-        <input type="hidden" name="accion" value="descargar_limpiar">
-        <!-- Include current GPV and PDV so the download action can build a filename containing GPV -->
+        <input type="hidden" name="accion" value="descargar">
         <input type="hidden" name="gpv" value="<?php echo htmlspecialchars($gpv_input); ?>">
         <input type="hidden" name="pdv" value="<?php echo htmlspecialchars($pdv_input); ?>">
-        <button type="submit" id="downloadButton"> Descargar y Finalizar </button>
-        <p style="text-align: center; font-size: 0.9em; color: #888;">*Al descargar el archivo, se borrarán los datos previos.*</p>
+        <button type="submit" id="downloadButton"> Descargar Registros </button>
+        <p style="text-align: center; font-size: 0.9em; color: #888;">*Los datos se mantienen guardados después de la descarga.*</p>
     </form>
 
     <?php endif; ?>
+
+    <!-- Pass PHP data to JavaScript -->
+    <script>
+        // GPV-PDV mapping from PHP
+        const gpvPdvData = <?php echo json_encode($gpv_pdv_data); ?>;
+    </script>
+    
+    <!-- Link to external JavaScript file -->
+    <script src="script.js"></script>
 
 </body>
 
