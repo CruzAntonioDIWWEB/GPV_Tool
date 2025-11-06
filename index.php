@@ -267,10 +267,6 @@ $gpv_pdv_data = get_all_gpv_pdv_pairs($vendidas_file);
 </head>
 
 <body>
-    <!-- Admin Button in Side -->
-<div class="admin-side-button">
-    <a href="admin.php" class="admin-btn">⚙️ Admin</a>
-</div>
     <?php
     // Display error/success messages
     if (!empty($message)):
@@ -303,6 +299,10 @@ $gpv_pdv_data = get_all_gpv_pdv_pairs($vendidas_file);
         </select>
 
         <button type="submit">Iniciar</button>
+            <!-- Admin Button in Side -->
+<div class="admin-side-button">
+    <a href="admin.php" class="admin-btn">⚙️ Admin</a>
+</div>
     </form>
 
     <hr>

@@ -181,7 +181,6 @@ foreach ($monthly_files as $file) {
                 <h1>📊 Panel de Administración</h1>
                 <p>Gestión de Archivos de Registros</p>
             </div>
-            <a href="?logout=1" class="logout-btn">Cerrar Sesión</a>
         </div>
         
         <div class="admin-content">

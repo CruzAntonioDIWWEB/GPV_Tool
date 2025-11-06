@@ -448,26 +448,6 @@ body > p {
     font-size: 14px;
 }
 
-.logout-btn {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--lowi-white);
-    padding: 10px 20px;
-    border: 2px solid var(--lowi-white);
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-}
-
-.logout-btn:hover {
-    background: var(--lowi-white);
-    color: var(--lowi-purple);
-    transform: translateY(-2px);
-}
-
 /* ============================================
    ADMIN PANEL - Content Area
    ============================================ */
