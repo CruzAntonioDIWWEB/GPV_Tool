@@ -1,4 +1,6 @@
-/* LOWI Color Palette */
+/* ============================================
+   LOWI Color Palette
+   ============================================ */
 :root {
     --lowi-coral: #FF6B6B;
     --lowi-orange: #FF8C42;
@@ -11,7 +13,9 @@
     --lowi-error: #DC3545;
 }
 
-/* Reset and Base Styles */
+/* ============================================
+   MAIN TOOL STYLES - Reset and Base
+   ============================================ */
 * {
     margin: 0;
     padding: 0;
@@ -26,8 +30,10 @@ body {
     color: var(--lowi-navy);
 }
 
-/* Container for forms */
-#smallForm, #bigForm {
+/* ============================================
+   MAIN TOOL - Form Container
+   ============================================ */
+#smallForm, #bigForm, #downloadForm {
     background: var(--lowi-white);
     padding: 30px;
     border-radius: 12px;
@@ -36,7 +42,9 @@ body {
     margin: 20px auto;
 }
 
-/* Headings */
+/* ============================================
+   MAIN TOOL - Headings
+   ============================================ */
 h2 {
     color: var(--lowi-purple);
     font-size: 14px;
@@ -46,13 +54,16 @@ h2 {
     letter-spacing: 0.5px;
 }
 
-/* Form Inputs */
+/* ============================================
+   MAIN TOOL - Form Inputs
+   ============================================ */
 input[type="text"],
+input[type="password"],
 input[type="datetime-local"],
 input[type="date"],
 input[type="number"],
 textarea,
-select { /* <-- ADDED STYLE FOR SELECT ELEMENT */
+select {
     width: 100%;
     padding: 12px 16px;
     border: 2px solid #E9ECEF;
@@ -61,28 +72,43 @@ select { /* <-- ADDED STYLE FOR SELECT ELEMENT */
     margin-bottom: 20px;
     transition: all 0.3s ease;
     font-family: inherit;
-    /* Reset background color to match other inputs, as select can sometimes look different */
-    background-color: var(--lowi-white); 
-    /* Remove default system arrow on some browsers for better control */
+    background-color: var(--lowi-white);
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    /* Add a custom arrow style using a background image/SVG (optional, but improves consistency) */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%232D1B69'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: 1.5em;
 }
 
+/* Remove arrow from non-select inputs */
+input[type="text"],
+input[type="password"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="number"],
+textarea {
+    background-image: none;
+}
+
 input[type="text"]:focus,
+input[type="password"]:focus,
 input[type="datetime-local"]:focus,
 input[type="date"]:focus,
 input[type="number"]:focus,
 textarea:focus,
-select:focus { /* <-- ADDED FOCUS STYLE FOR SELECT ELEMENT */
+select:focus {
     outline: none;
     border-color: var(--lowi-coral);
     box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+/* Disabled select styling */
+select:disabled {
+    background-color: #F8F9FA;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 textarea {
@@ -90,7 +116,9 @@ textarea {
     min-height: 100px;
 }
 
-/* Labels */
+/* ============================================
+   MAIN TOOL - Labels
+   ============================================ */
 label {
     display: block;
     color: var(--lowi-purple);
@@ -101,7 +129,9 @@ label {
     letter-spacing: 0.5px;
 }
 
-/* Buttons */
+/* ============================================
+   MAIN TOOL - Buttons
+   ============================================ */
 button[type="submit"] {
     width: 100%;
     padding: 14px 24px;
@@ -127,7 +157,9 @@ button[type="submit"]:active {
     transform: translateY(0);
 }
 
-/* Fieldsets */
+/* ============================================
+   MAIN TOOL - Fieldsets
+   ============================================ */
 fieldset {
     border: 2px solid #E9ECEF;
     border-radius: 8px;
@@ -144,7 +176,9 @@ legend {
     letter-spacing: 0.5px;
 }
 
-/* Radio Buttons */
+/* ============================================
+   MAIN TOOL - Radio Buttons
+   ============================================ */
 input[type="radio"] {
     margin-right: 8px;
     margin-left: 15px;
@@ -178,7 +212,9 @@ fieldset input[type="number"] {
     margin-bottom: 0;
 }
 
-/* Table Styles */
+/* ============================================
+   MAIN TOOL - Table Styles
+   ============================================ */
 #resultsTable {
     width: 100%;
     max-width: 600px;
@@ -231,7 +267,9 @@ fieldset input[type="number"] {
     border-right: none;
 }
 
-/* Horizontal Rule */
+/* ============================================
+   MAIN TOOL - Horizontal Rule
+   ============================================ */
 hr {
     border: none;
     height: 2px;
@@ -240,11 +278,9 @@ hr {
     max-width: 600px;
 }
 
-/* Messages */
-/* NOTE: The logic for determining success/error color based on content (p:contains('ERROR')) 
-    is not standard CSS and is being ignored here, using a single consistent style. 
-    You might want to implement this using a class in PHP instead.
-*/
+/* ============================================
+   MAIN TOOL - Messages
+   ============================================ */
 body > p {
     max-width: 600px;
     margin: 20px auto;
@@ -258,19 +294,66 @@ body > p {
     border-left: 4px solid var(--lowi-coral);
 }
 
-/* Message styling classes (optional, better than p:contains) */
 .success-message {
     border-left: 4px solid var(--lowi-success);
     color: var(--lowi-success);
+    background: #d4edda;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 600px;
+    animation: slideDown 0.3s ease;
 }
 
 .error-message {
     border-left: 4px solid var(--lowi-error);
     color: var(--lowi-error);
+    background: #f8d7da;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 600px;
+    animation: slideDown 0.3s ease;
 }
 
+/* ============================================
+   MAIN TOOL - Download Button Styling
+   ============================================ */
+#downloadButton {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--lowi-purple) 0%, var(--lowi-navy) 100%);
+    color: var(--lowi-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(45, 27, 105, 0.3);
+}
 
-/* Animation */
+#downloadButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(45, 27, 105, 0.4);
+}
+
+#downloadForm p {
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--lowi-gray);
+    margin-top: 10px;
+}
+
+/* ============================================
+   ANIMATION
+   ============================================ */
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -282,13 +365,325 @@ body > p {
     }
 }
 
-/* Responsive Design */
+/* ============================================
+   ADMIN PANEL STYLES - Login Container
+   ============================================ */
+.login-container {
+    background: var(--lowi-white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.login-container h1 {
+    margin-top: 0;
+    color: var(--lowi-purple);
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.login-container > p {
+    color: var(--lowi-gray);
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.login-container input[type="password"] {
+    margin-bottom: 20px;
+}
+
+.login-container button {
+    background: linear-gradient(135deg, var(--lowi-coral) 0%, var(--lowi-orange) 100%);
+}
+
+.login-container button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+.login-container .error-message {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+/* ============================================
+   ADMIN PANEL - Main Container
+   ============================================ */
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--lowi-white);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+/* ============================================
+   ADMIN PANEL - Header
+   ============================================ */
+.admin-header {
+    background: linear-gradient(135deg, var(--lowi-purple) 0%, var(--lowi-navy) 100%);
+    color: var(--lowi-white);
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-header h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.admin-header p {
+    opacity: 0.9;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--lowi-white);
+    padding: 10px 20px;
+    border: 2px solid var(--lowi-white);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.logout-btn:hover {
+    background: var(--lowi-white);
+    color: var(--lowi-purple);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   ADMIN PANEL - Content Area
+   ============================================ */
+.admin-content {
+    padding: 30px;
+}
+
+/* ============================================
+   ADMIN PANEL - Statistics Cards
+   ============================================ */
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--lowi-coral) 0%, var(--lowi-orange) 100%);
+    color: var(--lowi-white);
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card h3 {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-card p {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* ============================================
+   ADMIN PANEL - Actions
+   ============================================ */
+.admin-actions {
+    margin-bottom: 30px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-admin {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--lowi-purple) 0%, var(--lowi-navy) 100%);
+    color: var(--lowi-white);
+    box-shadow: 0 4px 12px rgba(45, 27, 105, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(45, 27, 105, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--lowi-success) 0%, #20873a 100%);
+    color: var(--lowi-white);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+}
+
+.btn-download {
+    background: linear-gradient(135deg, var(--lowi-coral) 0%, var(--lowi-orange) 100%);
+    color: var(--lowi-white);
+    font-size: 14px;
+    padding: 8px 15px;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--lowi-error) 0%, #c82333 100%);
+    color: var(--lowi-white);
+    font-size: 14px;
+    padding: 8px 15px;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+/* ============================================
+   ADMIN PANEL - Month Groups
+   ============================================ */
+.month-group {
+    margin-bottom: 40px;
+}
+
+.month-header {
+    background: var(--lowi-light);
+    padding: 15px 20px;
+    border-left: 4px solid var(--lowi-coral);
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--lowi-purple);
+    border-radius: 8px;
+}
+
+/* ============================================
+   ADMIN PANEL - Tables
+   ============================================ */
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 20px;
+    background: var(--lowi-white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-table th {
+    background: linear-gradient(135deg, var(--lowi-purple) 0%, var(--lowi-navy) 100%);
+    color: var(--lowi-white);
+    padding: 15px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-table td {
+    padding: 15px;
+    border-bottom: 1px solid #E9ECEF;
+    color: var(--lowi-navy);
+}
+
+.admin-table tbody tr:hover {
+    background: var(--lowi-light);
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* ============================================
+   ADMIN PANEL - Empty State
+   ============================================ */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--lowi-gray);
+}
+
+.empty-state span {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.empty-state p {
+    font-size: 18px;
+    margin: 0;
+    color: var(--lowi-navy);
+}
+
+.empty-subtitle {
+    font-size: 14px !important;
+    color: var(--lowi-gray) !important;
+    margin-top: 10px !important;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - Main Tool
+   ============================================ */
 @media (max-width: 640px) {
     body {
         padding: 10px;
     }
     
-    #smallForm, #bigForm {
+    #smallForm, #bigForm, #downloadForm {
         padding: 20px;
     }
     
@@ -303,5 +698,50 @@ body > p {
     #resultsTable td {
         padding: 12px 8px;
         font-size: 16px;
+    }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - Admin Panel
+   ============================================ */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-actions {
+        flex-direction: column;
+    }
+    
+    .btn-admin {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .admin-table {
+        font-size: 14px;
+    }
+    
+    .admin-table td,
+    .admin-table th {
+        padding: 10px;
+    }
+    
+    .file-actions {
+        flex-direction: column;
+    }
+    
+    .login-container {
+        margin: 20px;
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
     }
 }
