@@ -37,6 +37,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             <form method="POST">
                 <input type="password" name="password" placeholder="Contraseña" required autofocus>
                 <button type="submit">Entrar</button>
+                <a href="index.php" class="return-btn">← Volver a la Herramienta</a>
             </form>
             <?php if (isset($login_error)): ?>
                 <p class="error-message"><?php echo $login_error; ?></p>

@@ -792,3 +792,26 @@ body > p {
         width: auto;
     }
 }
+
+/* ============================================
+   RETURN BUTTON IN LOGIN FORM
+   ============================================ */
+.return-btn {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, var(--lowi-purple) 0%, #8127c2 100%);
+    color: var(--lowi-white);
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.return-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    color: var(--lowi-white);
+}
