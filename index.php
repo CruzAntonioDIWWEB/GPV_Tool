@@ -25,10 +25,10 @@ $pdv_input = strtoupper(trim($_POST['pdv'] ?? ''));
  * Function to generate the log filename based on GPV and current month/year
  * Format: GPVNAME_MonthName_Year.csv (e.g., JUANLU_November_2025.csv)
  */
-function get_log_filename($gpv) {
+function get_log_filename($gpv, $format = 'xlsx') {
     $month_name = date('F'); // Full month name (e.g., "November")
     $year = date('Y');       // Year (e.g., "2025")
-    return strtoupper($gpv) . '_' . $month_name . '_' . $year . '.csv';
+    return strtoupper($gpv) . '_' . $month_name . '_' . $year . '.' . $format;
 }
 
 /**
@@ -141,19 +141,18 @@ function get_all_gpv_pdv_pairs($file_name) {
 
 // --- DOWNLOAD FILE (No longer clears the file) ---
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['accion'] == 'descargar'){
-    $log_file = get_log_filename($gpv_input);
+    $log_file = get_log_filename($gpv_input, 'xlsx');
     
     if (file_exists($log_file) && filesize($log_file) > 0) {
-        // Set up the headers to force the download of the file
-        header('Content-Type: application/csv');
+        // Set up the headers to force the download of the Excel file
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="' . $log_file . '"');
         header('Pragma: no-cache');
         header('Expires: 0');
+        header('Content-Length: ' . filesize($log_file));
         
-        // Sends the content of the file to the browser
         readfile($log_file);
-        // NOTE: File is NOT cleared anymore - data persists for the month
-
+        exit;
     } else {
         echo "El archivo de registros está vacío o no existe. No hay nada que descargar.";
     }
@@ -162,39 +161,51 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['a
 
 // --- EXPORT FUNCTION (big form) ---
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['accion'] == 'exportar') {
-    // Get the GPV-specific log file
-    $log_file = get_log_filename($_POST['gpv_log']);
+    // Get the GPV-specific log file (now .xlsx)
+    $log_file = get_log_filename($_POST['gpv_log'], 'xlsx');
     
-    // Collect data from the big form
-    $log_data = [
-        date("Y-m-d H:i:s"), 
-        $_POST['gpv_log'],
-        $_POST['pdv_log'],
-        $_POST['fecha_hora'],
-        $_POST['top'],
-        $_POST['plv'],
-        $_POST['acciones'],
-        (int)($_POST['compromiso_movil'] ?? 0),
-        (int)($_POST['compromiso_fibra'] ?? 0),
-        $_POST['fecha_proxima_visita']
-    ];
-
-    if (($handle = fopen($log_file, 'a')) !== FALSE ) {
-        // Write headers only if the file is empty or doesn't exist yet
-        if(!file_exists($log_file) || filesize($log_file) == 0) {
-            $headers = ['Fecha_Registro', 'GPV', 'PDV', 'Fecha_hora', 'TOP', 'PLV', 'Acciones', 'Compromiso_Movil', 'Compromiso_Fibra', 'Fecha_Proxima_Visita'];
-            fputcsv($handle, $headers, ';');
+    require 'vendor/autoload.php'; // Load PhpSpreadsheet
+    
+    try {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Set headers
+        $headers = ['Fecha_Registro', 'GPV', 'PDV', 'Fecha_hora', 'TOP', 'PLV', 'Acciones', 'Compromiso_Movil', 'Compromiso_Fibra', 'Compromiso_Cumplido', 'Fecha_Proxima_Visita'];
+        $sheet->fromArray($headers, NULL, 'A1');
+        
+        // Collect data
+        $log_data = [
+            date("Y-m-d H:i:s"), 
+            $_POST['gpv_log'],
+            $_POST['pdv_log'],
+            $_POST['fecha_hora'],
+            $_POST['top'],
+            $_POST['plv'],
+            $_POST['acciones'],
+            (int)($_POST['compromiso_movil'] ?? 0),
+            (int)($_POST['compromiso_fibra'] ?? 0),
+            $_POST['compromiso'] ?? 'NO', // Added compromiso field
+            $_POST['fecha_proxima_visita']
+        ];
+        
+        // Add data row
+        $sheet->fromArray([$log_data], NULL, 'A2');
+        
+        // Auto-size columns for better readability
+        foreach(range('A','K') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
-        fputcsv($handle, $log_data, ';');
-        fclose($handle); 
-        $message = "¡Datos guardados con éxito en " . htmlspecialchars($log_file) . "!"; // MENSAJE DE ÉXITO 
-
-        // Needed so the search code runs and displays the table after successful export
-        $gpv_input = $_POST['gpv_log'];
+        
+        // Save file
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save($log_file);
+        
+        $message = "¡Datos guardados con éxito en " . htmlspecialchars($log_file) . "!";
         $pdv_input = $_POST['pdv_log'];
-    } else {
-        // MENSAJE DE ERROR 
-        $message = "ERROR: No se pudo escribir en el archivo de registro. Compruebe los permisos.";
+        
+    } catch (Exception $e) {
+        $message = "ERROR: No se pudo guardar el archivo Excel. Error: " . $e->getMessage();
     }
 }
 

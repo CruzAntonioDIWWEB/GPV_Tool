@@ -55,10 +55,10 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 // Function to get all GPV monthly CSV files
 function get_all_monthly_files() {
     $files = [];
-    $pattern = '*_*_*.csv'; // Matches: GPVNAME_Month_Year.csv
+    $pattern = '*_*_*.xlsx'; // Matches: GPVNAME_Month_Year.xlsx
 
     foreach (glob($pattern) as $filename) {
-        // Skip the master database files
+        // Skip the master database files (they remain CSV)
         if ($filename === 'tabla_vendidas.csv' || $filename === 'tabla_activadas.csv') {
             continue;
         }
@@ -94,11 +94,19 @@ function format_bytes($bytes, $precision = 2) {
 if (isset($_GET['download']) && !empty($_GET['download'])) {
     $file = basename($_GET['download']); // Security: prevent directory traversal
     
-    if (file_exists($file) && strpos($file, '_') !== false) { // Basic validation
-        header('Content-Type: application/csv');
+    if (file_exists($file) && (strpos($file, '_') !== false)) { // Basic validation
+        $file_extension = pathinfo($file, PATHINFO_EXTENSION);
+        
+        if ($file_extension === 'xlsx') {
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        } else {
+            header('Content-Type: application/csv'); // Fallback for CSV
+        }
+        
         header('Content-Disposition: attachment; filename="' . $file . '"');
         header('Pragma: no-cache');
         header('Expires: 0');
+        header('Content-Length: ' . filesize($file));
         readfile($file);
         exit;
     }
