@@ -313,7 +313,7 @@ $gpv_pdv_data = get_all_gpv_pdv_pairs($vendidas_file);
         <button type="submit">Iniciar</button>
         
         <!-- Admin Button -->
-        <a href="admin.php" class="admin-btn">⚙️ Admin</a>
+        <a href="admin.php" class="admin-btn">Admin</a>
     </form>
 
     <hr>

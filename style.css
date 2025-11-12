@@ -1068,8 +1068,8 @@ body > p {
 }
 
 .admin-btn {
-    display: inline-block;
-    padding: 12px 20px;
+    display: flex;                    /* block-level flex so margins can center the element */
+    padding: 10px 16px;
     background: linear-gradient(135deg, var(--lowi-coral) 0%, var(--lowi-orange) 100%);
     color: var(--lowi-white);
     text-decoration: none;
@@ -1081,11 +1081,11 @@ body > p {
     box-shadow: 0 4px 12px rgba(45, 27, 105, 0.3);
     transition: all 0.3s ease;
     min-height: 44px;
-    display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    margin-top: 10px;
+    width: auto;           /* let the button size to its content */
+    max-width: 220px;     /* don't grow too wide */
+    margin: 10px auto;    /* center horizontally within the form */
 }
 
 .admin-btn:hover {
@@ -1102,6 +1102,7 @@ body > p {
         font-size: 13px;
         letter-spacing: 0px;
         min-height: 44px;
+        width: 100%; /* keep full-width on small screens for touch targets */
     }
 }
 
