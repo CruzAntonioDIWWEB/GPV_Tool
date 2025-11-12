@@ -211,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['accion']) && $_POST['a
 
 
 // --- SEARCH FUNCTION GPV-PDV (small form) ---
-if ($_SERVER["REQUEST_METHOD"] == "POST" && ( (isset($_POST['accion']) && $_POST['accion'] == 'buscar') || isset($_POST['gpv_log'])) ){
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['accion']) && $_POST['accion'] == 'buscar'){
 
     $vendidas_result = search_file($vendidas_file, $gpv_input, $pdv_input);
     $activadas_result = search_file($activadas_file, $gpv_input, $pdv_input);
@@ -273,6 +273,7 @@ $gpv_pdv_data = get_all_gpv_pdv_pairs($vendidas_file);
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Herramienta de Gestión</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -310,10 +311,9 @@ $gpv_pdv_data = get_all_gpv_pdv_pairs($vendidas_file);
         </select>
 
         <button type="submit">Iniciar</button>
-            <!-- Admin Button in Side -->
-<div class="admin-side-button">
-    <a href="admin.php" class="admin-btn">⚙️ Admin</a>
-</div>
+        
+        <!-- Admin Button -->
+        <a href="admin.php" class="admin-btn">⚙️ Admin</a>
     </form>
 
     <hr>

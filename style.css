@@ -28,6 +28,15 @@ body {
     min-height: 100vh;
     padding: 20px;
     color: var(--lowi-navy);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mobile-first padding */
+@media (max-width: 480px) {
+    body {
+        padding: 8px;
+    }
 }
 
 /* ============================================
@@ -42,6 +51,14 @@ body {
     margin: 20px auto;
 }
 
+@media (max-width: 480px) {
+    #smallForm, #bigForm, #downloadForm {
+        padding: 16px;
+        margin: 12px auto;
+        border-radius: 10px;
+    }
+}
+
 /* ============================================
    MAIN TOOL - Headings
    ============================================ */
@@ -52,6 +69,14 @@ h2 {
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 12px;
+        margin-bottom: 6px;
+        letter-spacing: 0.3px;
+    }
 }
 
 /* ============================================
@@ -80,6 +105,21 @@ select {
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: 1.5em;
+}
+
+@media (max-width: 480px) {
+    input[type="text"],
+    input[type="password"],
+    input[type="datetime-local"],
+    input[type="date"],
+    input[type="number"],
+    textarea,
+    select {
+        padding: 14px 12px;
+        font-size: 16px;
+        margin-bottom: 16px;
+        border-radius: 6px;
+    }
 }
 
 /* Remove arrow from non-select inputs */
@@ -129,6 +169,14 @@ label {
     letter-spacing: 0.5px;
 }
 
+@media (max-width: 480px) {
+    label {
+        font-size: 12px;
+        margin-bottom: 6px;
+        letter-spacing: 0.3px;
+    }
+}
+
 /* ============================================
    MAIN TOOL - Buttons
    ============================================ */
@@ -146,6 +194,7 @@ button[type="submit"] {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    min-height: 44px;
 }
 
 button[type="submit"]:hover {
@@ -155,6 +204,15 @@ button[type="submit"]:hover {
 
 button[type="submit"]:active {
     transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+    button[type="submit"] {
+        padding: 16px 20px;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+        min-height: 48px;
+    }
 }
 
 /* ============================================
@@ -176,6 +234,20 @@ legend {
     letter-spacing: 0.5px;
 }
 
+@media (max-width: 480px) {
+    fieldset {
+        border: 2px solid #E9ECEF;
+        border-radius: 6px;
+        padding: 14px 12px;
+        margin-bottom: 16px;
+    }
+    
+    legend {
+        font-size: 12px;
+        padding: 0 6px;
+    }
+}
+
 /* ============================================
    MAIN TOOL - Radio Buttons
    ============================================ */
@@ -184,6 +256,8 @@ input[type="radio"] {
     margin-left: 15px;
     accent-color: var(--lowi-coral);
     cursor: pointer;
+    width: 18px;
+    height: 18px;
 }
 
 input[type="radio"]:first-of-type {
@@ -197,6 +271,7 @@ fieldset label[for^="compromiso_"] {
     text-transform: none;
     font-weight: 500;
     cursor: pointer;
+    margin-right: 20px;
 }
 
 /* Number inputs in fieldset */
@@ -210,6 +285,27 @@ fieldset > div:last-child {
 
 fieldset input[type="number"] {
     margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+    input[type="radio"] {
+        margin-right: 6px;
+        margin-left: 12px;
+        width: 20px;
+        height: 20px;
+    }
+    
+    fieldset label[for^="top_"],
+    fieldset label[for^="compromiso_"] {
+        display: block;
+        margin-bottom: 10px;
+        margin-right: 0;
+        font-size: 14px;
+    }
+    
+    fieldset > div {
+        margin-bottom: 12px;
+    }
 }
 
 /* ============================================
@@ -267,6 +363,29 @@ fieldset input[type="number"] {
     border-right: none;
 }
 
+@media (max-width: 480px) {
+    #resultsTable {
+        margin: 16px auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+    
+    #resultsTable th {
+        padding: 12px 8px;
+        font-size: 12px;
+    }
+    
+    #resultsTable td {
+        padding: 12px 8px;
+        font-size: 16px;
+        border-right: none;
+    }
+    
+    #resultsTable td:first-child {
+        border-right: 1px solid #E9ECEF;
+    }
+}
+
 /* ============================================
    MAIN TOOL - Horizontal Rule
    ============================================ */
@@ -276,6 +395,13 @@ hr {
     background: linear-gradient(90deg, transparent 0%, var(--lowi-coral) 50%, transparent 100%);
     margin: 30px auto;
     max-width: 600px;
+}
+
+@media (max-width: 480px) {
+    hr {
+        margin: 20px auto;
+        height: 1.5px;
+    }
 }
 
 /* ============================================
@@ -320,6 +446,31 @@ body > p {
     animation: slideDown 0.3s ease;
 }
 
+@media (max-width: 480px) {
+    body > p {
+        margin: 12px auto;
+        padding: 14px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        border-left-width: 3px;
+    }
+    
+    .success-message {
+        margin: 12px auto;
+        padding: 14px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    
+    .error-message {
+        margin: 12px auto;
+        padding: 14px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+}
+
 /* ============================================
    MAIN TOOL - Download Button Styling
    ============================================ */
@@ -337,6 +488,7 @@ body > p {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(45, 27, 105, 0.3);
+    min-height: 44px;
 }
 
 #downloadButton:hover {
@@ -349,6 +501,21 @@ body > p {
     font-size: 0.9em;
     color: var(--lowi-gray);
     margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+    #downloadButton {
+        padding: 16px 20px;
+        font-size: 15px;
+        min-height: 48px;
+        letter-spacing: 0.5px;
+    }
+    
+    #downloadForm p {
+        font-size: 12px;
+        margin-top: 8px;
+        padding: 0 8px;
+    }
 }
 
 /* ============================================
@@ -413,6 +580,38 @@ body > p {
     font-size: 14px;
 }
 
+@media (max-width: 480px) {
+    .login-container {
+        padding: 24px 16px;
+        border-radius: 10px;
+        position: static;
+        transform: none;
+        top: auto;
+        left: auto;
+        max-width: 100%;
+        margin: 20px auto;
+    }
+    
+    .login-container h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+    
+    .login-container > p {
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+    
+    .login-container input[type="password"] {
+        margin-bottom: 16px;
+    }
+    
+    .login-container .error-message {
+        margin-top: 12px;
+        font-size: 13px;
+    }
+}
+
 /* ============================================
    ADMIN PANEL - Main Container
    ============================================ */
@@ -448,11 +647,35 @@ body > p {
     font-size: 14px;
 }
 
+@media (max-width: 480px) {
+    .admin-header {
+        padding: 20px 16px;
+        text-align: center;
+        flex-direction: column;
+    }
+    
+    .admin-header h1 {
+        font-size: 24px;
+        margin-bottom: 4px;
+    }
+    
+    .admin-header p {
+        font-size: 13px;
+        margin-top: 4px;
+    }
+}
+
 /* ============================================
    ADMIN PANEL - Content Area
    ============================================ */
 .admin-content {
     padding: 30px;
+}
+
+@media (max-width: 480px) {
+    .admin-content {
+        padding: 16px;
+    }
 }
 
 /* ============================================
@@ -493,6 +716,28 @@ body > p {
     margin: 0;
 }
 
+@media (max-width: 480px) {
+    .admin-stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        padding: 16px;
+        border-radius: 8px;
+    }
+    
+    .stat-card h3 {
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .stat-card p {
+        font-size: 28px;
+    }
+}
+
 /* ============================================
    ADMIN PANEL - Actions
    ============================================ */
@@ -515,6 +760,10 @@ body > p {
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: all 0.3s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-primary {
@@ -537,6 +786,21 @@ body > p {
 .btn-success:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+}
+
+@media (max-width: 480px) {
+    .admin-actions {
+        margin-bottom: 20px;
+        gap: 10px;
+        flex-direction: column;
+    }
+    
+    .btn-admin {
+        padding: 14px 16px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        width: 100%;
+    }
 }
 
 .btn-download {
@@ -566,6 +830,18 @@ body > p {
     box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
 }
 
+@media (max-width: 480px) {
+    .btn-download {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    .btn-danger {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}
+
 /* ============================================
    ADMIN PANEL - Month Groups
    ============================================ */
@@ -582,6 +858,20 @@ body > p {
     font-weight: bold;
     color: var(--lowi-purple);
     border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+    .month-group {
+        margin-bottom: 24px;
+    }
+    
+    .month-header {
+        padding: 12px 16px;
+        border-left-width: 3px;
+        margin-bottom: 12px;
+        font-size: 16px;
+        border-radius: 6px;
+    }
 }
 
 /* ============================================
@@ -628,6 +918,87 @@ body > p {
     gap: 10px;
 }
 
+@media (max-width: 619px) {
+    .admin-table {
+        margin-bottom: 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        overflow-x: auto;
+    }
+    
+    .admin-table th {
+        padding: 10px 6px;
+        font-size: 11px;
+        letter-spacing: 0px;
+        white-space: nowrap;
+    }
+    
+    .admin-table td {
+        padding: 10px 6px;
+        font-size: 12px;
+    }
+    
+    /* Hide both Size and Date columns on very small screens */
+    .admin-table th:nth-child(2),
+    .admin-table th:nth-child(3),
+    .admin-table td:nth-child(2),
+    .admin-table td:nth-child(3) {
+        display: none;
+    }
+    
+    .file-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+@media (min-width: 620px) and (max-width: 779px) {
+    .admin-table {
+        margin-bottom: 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        overflow-x: auto;
+    }
+    
+    .admin-table th {
+        padding: 10px 6px;
+        font-size: 11px;
+        letter-spacing: 0px;
+        white-space: nowrap;
+    }
+    
+    .admin-table td {
+        padding: 10px 6px;
+        font-size: 12px;
+    }
+    
+    /* Hide only Size column, show Date column */
+    .admin-table th:nth-child(2),
+    .admin-table td:nth-child(2) {
+        display: none;
+    }
+    
+    .file-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+@media (min-width: 780px) {
+    /* Show all columns on desktop */
+    .admin-table th:nth-child(2),
+    .admin-table td:nth-child(2),
+    .admin-table th:nth-child(3),
+    .admin-table td:nth-child(3) {
+        display: table-cell;
+    }
+    
+    .file-actions {
+        flex-direction: row;
+        gap: 8px;
+    }
+}
+
 /* ============================================
    ADMIN PANEL - Empty State
    ============================================ */
@@ -655,85 +1026,45 @@ body > p {
     margin-top: 10px !important;
 }
 
+@media (max-width: 480px) {
+    .empty-state {
+        padding: 40px 16px;
+    }
+    
+    .empty-state span {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    
+    .empty-state p {
+        font-size: 16px;
+    }
+    
+    .empty-subtitle {
+        font-size: 12px !important;
+        margin-top: 8px !important;
+    }
+}
+
 /* ============================================
    RESPONSIVE DESIGN - Main Tool
    ============================================ */
 @media (max-width: 640px) {
-    body {
-        padding: 10px;
-    }
-    
-    #smallForm, #bigForm, #downloadForm {
-        padding: 20px;
-    }
-    
-    button[type="submit"] {
-        font-size: 14px;
-    }
-    
-    #resultsTable {
-        font-size: 14px;
-    }
-    
-    #resultsTable td {
-        padding: 12px 8px;
-        font-size: 16px;
-    }
+    /* Additional refinements for tablet sizes */
 }
 
 /* ============================================
    RESPONSIVE DESIGN - Admin Panel
    ============================================ */
 @media (max-width: 768px) {
-    .admin-header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .admin-stats {
-        grid-template-columns: 1fr;
-    }
-    
-    .admin-actions {
-        flex-direction: column;
-    }
-    
-    .btn-admin {
-        width: 100%;
-        text-align: center;
-    }
-    
-    .admin-table {
-        font-size: 14px;
-    }
-    
-    .admin-table td,
-    .admin-table th {
-        padding: 10px;
-    }
-    
-    .file-actions {
-        flex-direction: column;
-    }
-    
-    .login-container {
-        margin: 20px;
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-    }
+    /* Tablet optimizations handled in component-specific media queries */
 }
 
 /* ============================================
    ADMIN SIDE BUTTON
    ============================================ */
 .admin-side-button {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
+    display: none;
 }
 
 .admin-btn {
@@ -749,27 +1080,28 @@ body > p {
     font-size: 14px;
     box-shadow: 0 4px 12px rgba(45, 27, 105, 0.3);
     transition: all 0.3s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
 }
 
 .admin-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(45, 27, 105, 0.4);
     color: var(--lowi-white);
+    text-decoration: none;
 }
 
 /* Responsive design for admin button */
-@media (max-width: 768px) {
-    .admin-side-button {
-        position: relative;
-        top: auto;
-        right: auto;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    
+@media (max-width: 480px) {
     .admin-btn {
-        display: inline-block;
-        width: auto;
+        padding: 12px 16px;
+        font-size: 13px;
+        letter-spacing: 0px;
+        min-height: 44px;
     }
 }
 
@@ -788,10 +1120,24 @@ body > p {
     font-weight: 600;
     font-size: 14px;
     transition: all 0.3s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .return-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
     color: var(--lowi-white);
+    text-decoration: none;
+}
+
+@media (max-width: 480px) {
+    .return-btn {
+        margin-top: 12px;
+        padding: 12px 12px;
+        font-size: 13px;
+        min-height: 44px;
+    }
 }
